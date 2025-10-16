@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NeverMiss Newsletter</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0b1020;
+    --panel: #111936;
+    --muted: #9fb0d6;
+    --text: #e8eeff;
+    --accent: #7aa2ff;
+    --card: #0f1a3a;
+    --card-hover: #12204a;
+    --shadow: rgba(0,0,0,0.35);
+  }
+  body {
+    margin: 0; padding: 0;
+    background: radial-gradient(1200px 800px at 20% -10%, #1b2450 0%, #0b1020 60%, #090e1b 100%) fixed;
+    color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+  }
+  .container {
+    max-width: 960px; margin: 0 auto; padding: 32px 20px 56px;
+  }
+  header {
+    text-align: center; margin-bottom: 24px;
+  }
+  header h1 {
+    margin: 0 0 6px; font-size: 28px; letter-spacing: 0.3px;
+  }
+  header .sub {
+    color: var(--muted); font-size: 14px;
+  }
+  section {
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 18px;
+    margin: 18px 0 26px;
+    box-shadow: 0 8px 30px var(--shadow);
+  }
+  h2 {
+    font-size: 18px; margin: 0 0 12px; letter-spacing: 0.2px; color: var(--accent);
+  }
+  .empty {
+    color: var(--muted);
+    padding: 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    border: 1px dashed rgba(255,255,255,0.08);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+   }
+   .card {
+    display: block;
+    text-decoration: none; color: inherit;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    overflow: hidden; /* for the banner radius */
+    transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.28);
+    }
+    .card:hover {
+    background: var(--card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+    }
+
+    .thumb-banner {
+    position: relative;
+    width: 100%;
+    background: #0c1636;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    /* modern: maintain 16:9 without the hack below (many webmail clients support this now) */
+    aspect-ratio: 16 / 9;
+    }
+    .thumb-banner__img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    }
+
+    .thumb-banner__ratio {
+    display: none; /* hidden when aspect-ratio works */
+    }
+    @supports not (aspect-ratio: 16 / 9) {
+        .thumb-banner { aspect-ratio: auto; }
+        .thumb-banner__ratio {
+            display: block;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 */
+        }
+        .thumb-banner__img,
+        .thumb-banner--placeholder .thumb-banner__icon {
+            position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+        }
+    }
+
+    .thumb-banner--placeholder {
+    display: grid; place-items: center;
+    color: var(--muted);
+    }
+    .thumb-banner__icon {
+    font-size: 42px; opacity: 0.9;
+    }
+
+    .meta {
+    padding: 12px 12px 14px;
+    min-width: 0; display: grid; gap: 6px;
+    }
+    .meta .date {
+    color: var(--muted); font-size: 12px;
+    }
+    .meta .title {
+    font-weight: 600; font-size: 16px; line-height: 1.35;
+    }
+    .meta .where {
+    color: var(--muted); font-size: 13px;
+    }
+
+  footer {
+    color: var(--muted);
+    text-align: center;
+    margin-top: 28px;
+    font-size: 12px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f7fb;
+      --panel: #ffffff;
+      --muted: #5b6a88;
+      --text: #0e1330;
+      --accent: #3a63ff;
+      --card: #ffffff;
+      --card-hover: #f5f7ff;
+      --shadow: rgba(0,0,0,0.12);
+    }
+    body {
+      background: radial-gradient(1200px 800px at 20% -10%, #eaf0ff 0%, #f6f7fb 60%, #f2f4fa 100%) fixed;
+    }
+    section {
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Upcoming Events</h1>
+      <div class="sub">Curated for you • Thursday, 16 October 2025</div>
+    </header>
+
+    
+    <section>
+      <h2>This week</h2>
+      <div class="grid">
+        
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/blood-incantation/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/E1902BEB-B3A3-4DEE-B6FC-CFDD9C7865B5/evg_bloodincantation_1313_750.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Thu, 16 Oct 2025 • 00:00</div>
+        <div class="title">Blood Incantation</div>
+        <div class="where">Floyd · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/dury-dava-live-exa/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/4CE188B8-5514-48EC-8CD1-A45F89DB9D1C/evg_durydavaliveeksa_1413_5118.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Thu, 16 Oct 2025 • 00:00</div>
+        <div class="title">DURY DAVA LIVE @ EXA</div>
+        <div class="where">EXA · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+      </div>
+    </section>
+    
+
+    <section>
+      <h2>This weekend</h2>
+      <div class="grid">
+        
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/akrobates-stauros-tou-notou-club/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/46DE950E-E230-48C1-8875-F636AFFF4164/evg_akrobates_1522_1512.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 17 Oct 2025 • 00:00</div>
+        <div class="title">ΑΚΡΟΒΑΤΕΣ | ΣΤΑΥΡΟΣ ΤΟΥ ΝΟΤΟΥ CLUB</div>
+        <div class="where">Σταυρος του Νοτου - Σταυρος του Νοτου - Club · Ν. Κόσμος · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/gewalt-live-at-death-disco/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/0937D6EC-A480-4562-8795-BB089C43AF28/evg_gewaltliveatdeathdisco_1441_949.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 17 Oct 2025 • 00:00</div>
+        <div class="title">Gewalt live at Death Disco</div>
+        <div class="where">Death Disco · Μοναστηράκι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/all-them-witches-house-of-mirrors/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/81E8A443-BF68-4CCA-9194-89E73A02C3C0/evg_allthemwitches-houseofmir_1256_2659.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 18 Oct 2025 • 00:00</div>
+        <div class="title">All Them Witches - House of Mirrors</div>
+        <div class="where">Πολλαπλοι χωροι · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/nostos-live-the-ultimate-tribute-to-lynyrd-skynyrd-1/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/6CB6AAF6-49C9-4C58-ACE3-C34EBBBB0773/evg_nostoslivethetributetolyn_1254_3608.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 18 Oct 2025 • 00:00</div>
+        <div class="title">NOSTOS Live | The Ultimate Tribute to LYNYRD SKYNYRD</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/lari-basilio-group/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/0EDF609F-0AE2-4FA1-BE8E-A8DFC2C3D245/evg_laribasiliogroup_1453_3472.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 18 Oct 2025 • 00:00</div>
+        <div class="title">LARI BASILIO GROUP</div>
+        <div class="where">Μουσικη Σκηνη Αθηνα Live · Μοσχάτο · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/offer/lunar-shadow/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/3B99D147-98CA-4221-B405-6126C8AE958A/evg_lunarshadow_1219_3727.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 18 Oct 2025 • 00:00</div>
+        <div class="title">LUNAR SHADOW</div>
+        <div class="where">AN Club · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/thrash-vs-punk-chlorini/panic-alarm/hot-box/chemical-infection/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/AACA59BD-EC02-4D29-9A29-8BDF14721DBA/evg_thrashvspunkchlorini/pani_1850_4963.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 18 Oct 2025 • 00:00</div>
+        <div class="title">THRASH vs PUNK: CHLORINI / PANIC ALARM / HOT BOX / CHEMICAL INFECTION</div>
+        <div class="where">AUX CLUB · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/sunn-o-live-gagarin205/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/9A42856E-CA50-445F-91A6-1506A21A35A7/evg_sunnolivegagarin205_1711_1225.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sun, 19 Oct 2025 • 00:00</div>
+        <div class="title">SUNN O))) live @ Gagarin205</div>
+        <div class="where">Gagarin 205 Live Music Space · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+      </div>
+    </section>
+    
+
+    <section>
+      <h2>Next week</h2>
+      <div class="grid">
+        
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/magic-de-spell-tsopana-rave-frank-panx-saltadoroi-live/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/DBA68483-99A7-4ED0-B3DA-1B448D954273/evg_magicdespelltsopanaravefr_1443_3608.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 24 Oct 2025 • 00:00</div>
+        <div class="title">MAGIC DE SPELL | TSOPANA RAVE | FRANK PANX & ΣΑΛΤΑΔΟΡΟΙ LIVE</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/thy-art-is-murder-gagarin-205/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/2FE43C28-99F3-403D-842D-C1C38CE32DB0/evg_gagarin24/10_1143_854.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 24 Oct 2025 • 00:00</div>
+        <div class="title">THY ART IS MURDER | GAGARIN 205</div>
+        <div class="where">Gagarin 205 Live Music Space · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/oi-clism-tool-tribute-act-zontana-sto-ilion-plus/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/C0146E7A-8BD6-4C31-8399-D5AD109EF918/evg_clismtool_1222_3548.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 24 Oct 2025 • 00:00</div>
+        <div class="title">ΟI CLISM (TOOL TRIBUTE ACT) ΖΩΝΤΑΝΑ ΣΤΟ ILION PLUS</div>
+        <div class="where">ΙΛΙΟΝ Plus · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/offer/chipper-libertalia-release-live-show/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/FC5AF6AB-C1DD-4109-940E-97DAFCB55E51/evg_chipper-libertalia-releas_2301_3727.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 24 Oct 2025 • 00:00</div>
+        <div class="title">CHIPPER - "LIBERTALIA" - Release Live Show</div>
+        <div class="where">AN Club · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/pyks-laks-gia-tis-palies-agapes/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/0500CE04-30DC-40C8-BB68-364FD6EF61E0/evg_pukslaksgiatispaliesagapes_1413_1652.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 25 Oct 2025 • 00:00</div>
+        <div class="title">ΠΥΞ ΛΑΞ «Για τις παλιές αγάπες...»</div>
+        <div class="where">VOX · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/the-rasmus/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/DBD06E05-50C4-45F6-9959-A8114AE18D26/evg_therasmus_1425_1611.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 25 Oct 2025 • 00:00</div>
+        <div class="title">THE RASMUS</div>
+        <div class="where">Floyd · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/mass-culture-gr/sidus/kiva/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/EBBFD220-0734-4C3E-96E5-5DCEF5B71993/evg_massculturegr/sidus/kiva_1634_2659.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 25 Oct 2025 • 00:00</div>
+        <div class="title">MASS CULTURE (GR) // SIDUS // KIVA</div>
+        <div class="where">AUX CLUB · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+      </div>
+    </section>
+    
+
+    <section>
+      <h2>Coming soon</h2>
+      <div class="grid">
+        
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/festival/athens-spooks/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/5D0667F2-D0C6-46A2-8A30-FAC0B71FE13C/evg_athensspooks_1100_4999.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Thu, 30 Oct 2025 • 00:00</div>
+        <div class="title">ATHENS SPOOKS: Lucifer - The Abbey | ΚΥΤΤΑΡΟ</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/metallica-symphony-by-scream-inc/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/A386BD4E-F0E9-4218-A87F-A481BACF5336/evg_metallicasymphonybyscream_1326_2379.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">METALLICA & SYMPHONY by SCREAM INC</div>
+        <div class="where">CHRISTMAS THEATER · Γαλάτσι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/synaulia-afieroma-sto-thano-mikroutsiko-me-tous-rita-antonopoulou-kai-tous-rebans/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/DE9BD030-5840-4290-BAEA-FD3A4E852244/evg_sunaulia-aphieromastothan_2114_3608.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">ΣΥΝΑΥΛΙΑ-ΑΦΙΕΡΩΜΑ στο ΘΑΝΟ ΜΙΚΡΟΥΤΣΙΚΟ με την ΡΙΤΑ ΑΝΤΩΝΟΠΟΥΛΟΥ και τους ΡΕΒΑΝΣ</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/mple-stauros-tou-notou/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/9AE3BC9C-8ACA-44F2-B128-674A258295A1/evg_mplestaurostounotou_1348_146.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">ΜΠΛΕ | ΣΤΑΥΡΟΣ ΤΟΥ ΝΟΤΟΥ</div>
+        <div class="where">Σταυρος του Νοτου - Κεντρικη Σκηνη · Ν. Κόσμος · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/empty-frame-20-years-anniversary/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/DA884C93-43F1-45F5-8296-94BED218CC59/evg_emptyframe20-yearannivers_1648_5206.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">EMPTY FRAME - 20 Years Anniversary</div>
+        <div class="where">Death Disco · Μοναστηράκι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/fuel-eater-w/10code-the-heavy-hearts-vendetta-aux-club/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/335436A8-2614-4F84-A349-CF3AA39FAF8B/evg_fueleaterw/10codetheheavy_1503_4963.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">FUEL EATER w/ 10CODE + THE HEAVY HEARTS VENDETTA • AUX CLUB</div>
+        <div class="where">AUX CLUB · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/baggelis-germanos-salina-gabala/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/E0371211-6A61-4C0C-9B6D-8A035BA8892F/evg_baggelesgermanos-salinaga_1227_521.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">ΒΑΓΓΕΛΗΣ ΓΕΡΜΑΝΟΣ - ΣΑΛΙΝΑ ΓΑΒΑΛΑ</div>
+        <div class="where">Γυαλινο Μουσικο Θεατρο · Νέα Σμύρνη · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/trashland-halloween/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/23114BCB-305D-4D8A-B77D-068BB56314E9/evg_trashlandhalloween_1139_949.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">TRASHLAND HALLOWEEN</div>
+        <div class="where">Death Disco · Μοναστηράκι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/ghosts-of-halloween/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/8793D293-9BE0-4656-850A-896F85D01213/evg_ghostofhalloween_1325_4364.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 31 Oct 2025 • 00:00</div>
+        <div class="title">GHOSTS OF HALLOWEEN</div>
+        <div class="where">ΧΟΡΟΣΤΑΣΙΟ · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/ypogeia-reumata-aggeliki-toumpanaki-band-live/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/E9C2795E-3D7E-4B38-A055-70B2BA599885/evg_upogeiareumataaggeliketou_2048_3608.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 01 Nov 2025 • 00:00</div>
+        <div class="title">ΥΠΟΓΕΙΑ ΡΕΥΜΑΤΑ & ΑΓΓΕΛΙΚΗ ΤΟΥΜΠΑΝΑΚΗ BAND LIVE</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/aeon-parousiasi-diskou-xaimalina/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/67C60318-A9DF-4627-9188-579BCBFB8B37/evg_aeon-parousiasediskoukhai_1537_4879.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 01 Nov 2025 • 00:00</div>
+        <div class="title">AEON - ΠΑΡΟΥΣΙΑΣΗ ΔΊΣΚΟΥ "ΧΑΪΜΑΛΙΝΑ"</div>
+        <div class="where">Fuzz Club · Ταύρος · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/offer/mortal-torment-20-years-of-putrid-art/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/B7B31122-51EF-451D-AFA1-2780A3FD362C/evg_mortaltorment-20yearsofpu_1607_3727.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 01 Nov 2025 • 00:00</div>
+        <div class="title">Mortal Torment - 20 YEARS OF PUTRID ART</div>
+        <div class="where">AN Club · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/nowa-atena/ilion-plus/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/9B23CC29-3B4A-4187-A80B-8CB8B82EAD68/evg_nowaatena_1206_3548.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 01 Nov 2025 • 00:00</div>
+        <div class="title">NOWA ATENA // ILION PLUS</div>
+        <div class="where">ΙΛΙΟΝ Plus · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/from-cabaret-to-rock-n-roll-and-all-that-jazz/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/7CA0C951-97BE-439E-8D7B-5CB97EED9344/evg_fromcabarettorocknrolland_1319_565.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sun, 02 Nov 2025 • 00:00</div>
+        <div class="title">From Cabaret to Rock n Roll ...and Αll that Jazz! with Glitter Grotesque</div>
+        <div class="where">Αμαξοστοιχια - Θεατρο το Τρενο στο Ρουφ - Μουσικο Βαγονι Orient Express · Ρούφ · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/stelios-dabaris-full-band-live/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/EA1B0DE8-3F46-4F5A-BD99-A00FDBA2353E/evg_steliosdabaresfullbandlive_1717_5056.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sun, 02 Nov 2025 • 00:00</div>
+        <div class="title">ΣΤΕΛΙΟΣ ΔΑΒΑΡΗΣ Full Band Live</div>
+        <div class="where">Caja De Musica · Αμπελόκηποι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/nosfer-paradox/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/237B337A-F223-4859-90F2-5C429394BAE8/evg_nosfer-parousiasediskoupa_1731_4178.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 07 Nov 2025 • 00:00</div>
+        <div class="title">Nosfer - Παρουσίαση Δίσκου "Paradox"</div>
+        <div class="where">Fuzz Club · Ταύρος · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/traitrs-2025/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/FE1CC00A-F3E7-49DE-BB9F-673E864A996D/evg_traitrs2025_1351_949.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 07 Nov 2025 • 00:00</div>
+        <div class="title">Traitrs 2025</div>
+        <div class="where">Death Disco · Μοναστηράκι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/blaze-bayley-the-x-factor-live-stin-athina/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/2CB5D2B3-ADE4-4596-9AD8-412407E6B6FA/evg_blazebayleythexfactorlive_1319_4551.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 08 Nov 2025 • 00:00</div>
+        <div class="title">Blaze Bayley "The X Factor" live στην Αθήνα</div>
+        <div class="where">Fuzz Club · Ταύρος · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/offer/skiaxtro-friends-live-an-club/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/A896808A-1F75-4A6F-9E85-AFADE60CAED3/evg_skiakhtrofriendsliveanclub_1344_3727.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 08 Nov 2025 • 00:00</div>
+        <div class="title">ΣΚΙΑΧΤΡΟ + Friends Live @ An club</div>
+        <div class="where">AN Club · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/spyridoula-live-rock-birthday-party/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/1303341A-AA6D-47D9-8A60-6655F7087411/evg_spuridoulaliverockbirthda_2212_3608.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 08 Nov 2025 • 00:00</div>
+        <div class="title">ΣΠΥΡΙΔΟΥΛΑ LIVE | ROCK BIRTHDAY PARTY</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/valley-of-the-sun-us-live-stin-athina/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/57437FE0-9A10-4F99-A2A6-8AA59596D630/evg_valleyofthesunuslivestena_1114_4551.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 08 Nov 2025 • 00:00</div>
+        <div class="title">Valley of the Sun (US) live στην Αθήνα</div>
+        <div class="where">Gazarte - Ground Stage · Γκάζι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/typhus-biocancer-serpent-lord-eternal/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/441DB8E8-FAB6-4555-A140-84F8AA28B720/evg_typhus-biocancer-serpenlo_2206_1623.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 08 Nov 2025 • 00:00</div>
+        <div class="title">TYPHUS - BIO-CANCER - Serpent Lord - Eternal</div>
+        <div class="where">Piraeus Club Academy · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/skags-negative-contrast/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/465E4B56-EA16-4209-B871-4E760EC9413F/evg_skagsnegativecontrast_2307_949.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sat, 08 Nov 2025 • 00:00</div>
+        <div class="title">SKAGS + Negative Contrast</div>
+        <div class="where">Death Disco · Μοναστηράκι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/turbonegro-live-in-athens/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/27C5C69C-ED07-466C-B502-6B7C1E7CE102/evg_turbonegroliveinathens_1341_1881.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Sun, 09 Nov 2025 • 00:00</div>
+        <div class="title">TURBONEGRO live in ATHENS</div>
+        <div class="where">Gazarte - Ground Stage · Γκάζι · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/high-on-fire-live-kyttaro-live-club/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/F85800C9-0E68-4000-B4DD-EB1A4431E1D4/evg_highonfirelivekyttarolive_0220_1225.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Tue, 11 Nov 2025 • 00:00</div>
+        <div class="title">HIGH ON FIRE live @ Kyttaro Live Club</div>
+        <div class="where">Κυτταρο Live · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+
+    <a class="card" href="https://www.more.com/gr-el/tickets/music/narkissus-fall-bring-back-persephone-the-ruckus-habit-modulus-zero-live-in-athens/" target="_blank" rel="noopener noreferrer">
+      
+        <div class="thumb-banner">
+          <div class="thumb-banner__ratio"></div>
+          <img src="https://www.more.com/getattachment/80F425E1-9DD3-4BFA-A17F-A29A330AF174/evg_narkissusfallbringbackper_1338_1623.png" alt="" class="thumb-banner__img" />
+        </div>
+        
+      <div class="meta">
+        <div class="date">Fri, 14 Nov 2025 • 00:00</div>
+        <div class="title">Narkissus Fall • Bring Back Persephone • The Ruckus Habit • Modulus Zero live in Athens</div>
+        <div class="where">Piraeus Club Academy · Αθήνα · Αττική</div>
+      </div>
+    </a>
+    
+      </div>
+    </section>
+    
+
+    <footer>
+      You’re receiving this preview based on your Spotify favorites and local listings.
+    </footer>
+  </div>
+</body>
+</html>
