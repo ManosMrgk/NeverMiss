@@ -1,0 +1,4 @@
+- Web UI with Spotify integration
+- Turn the script into an API
+- DB storage for user data.
+- Email service and email scheduler. MailChimp

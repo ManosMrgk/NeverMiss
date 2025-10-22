@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}NeverMiss • Settings{% endblock %}
+{% block content %}
+<style>
+  /* Form + fields */
+  .form { display:grid; gap:16px; max-width:560px; }
+  .field label { display:block; font-weight:700; margin-bottom:6px; font-size:14px; }
+
+  .input {
+    width:100%;
+    height:44px;
+    padding:12px 14px;
+    font-size:15px;
+    color:var(--text);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--line);
+    border-radius:12px;
+    transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+    box-sizing:border-box;
+  }
+  .input::placeholder{ color:var(--muted); }
+  .input:focus{
+    outline:none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(134,168,255,.25);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  }
+
+  /* --- Enhanced custom select --- */
+  .select-wrap{ position:relative; }
+  .select-wrap select{
+    display:block;
+    width:100%;
+    min-height:44px;
+    padding:10px 42px 10px 14px;
+    font-size:15px;
+    color:var(--text);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-sizing:border-box;
+    line-height:20px;
+    cursor:pointer;
+    transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+
+    appearance:none; -webkit-appearance:none; -moz-appearance:none;
+    background-image:none;
+  }
+  .select-wrap select option { background:#232323; color:var(--text); padding:10px; font-size:15px; }
+  .select-wrap select:hover:not(:disabled){ background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04)); }
+  .select-wrap select:focus{
+    outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(134,168,255,.25);
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  }
+  select::-ms-expand{ display:none; }
+  .select-wrap::after{
+    content:"";
+    position:absolute; right:14px; top:50%; margin-top:-3px;
+    width:0; height:0;
+    border-left:6px solid transparent; border-right:6px solid transparent; border-top:8px solid var(--muted);
+    pointer-events:none; transition: transform .15s ease, border-top-color .15s ease;
+  }
+  .select-wrap:has(select:focus)::after{ transform:rotate(180deg); border-top-color:var(--accent); }
+
+  .input[disabled], .select-wrap select[disabled]{ opacity:.75; cursor:not-allowed; filter:saturate(.9); }
+
+  .divider { height:1px; border:0; background:var(--line); margin:16px 0; }
+
+  /* Card header actions */
+  .card__head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .head-actions { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+
+  /* Danger (unsubscribe) */
+  .card--danger{
+    border:1px solid rgba(220,38,38,.35);
+    background: rgba(220,38,38,.08);
+    color: var(--text);
+    border-radius:16px;
+    padding:16px;
+    margin-top:16px;
+  }
+  .card--danger h4{ margin:0 0 6px; font-size:16px; }
+  .card--danger p{ margin:0 0 10px; font-size:14px; color:var(--muted); }
+  .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+
+  small.muted { color:var(--muted); display:block; margin-top:6px; }
+
+  /* Buttons (use base from base.html) */
+  .btn--ghost{
+    background:transparent; color:var(--text);
+    border:1px solid var(--line);
+  }
+  .btn--ghost:hover{ background:rgba(255,255,255,.06); }
+</style>
+
+{% if request.args.get('saved') %}
+  <div class="flash flash--success">
+    <strong>Saved!</strong> Your preferences were updated.
+  </div>
+{% endif %}
+
+<div class="card">
+  <div class="card__head">
+    <h2 style="margin:0;">Connected to Spotify ✅</h2>
+    <div class="head-actions">
+      {% set my_uuid = session.get('user_uuid') %}
+      {% if my_uuid %}
+        <a class="btn" href="{{ url_for('suggestions', user_uuid=my_uuid) }}">View my suggestions</a>
+      {% endif %}
+      <a class="btn btn--ghost" href="/refresh_taste">Refresh music taste</a>
+      <a class="btn btn--ghost" href="/logout">Log out</a>
+    </div>
+  </div>
+
+  {% if profile %}
+    <p style="margin-top:10px;">Welcome, <strong>{{ profile.display_name or profile.id }}</strong>.</p>
+  {% endif %}
+
+  <hr class="divider" />
+
+  <h3 style="margin-top:0;">User settings</h3>
+  <form method="post" action="/save_info/" class="form">
+    <div class="field">
+      <label for="email">Email address</label>
+      <input
+        id="email"
+        class="input"
+        type="email"
+        name="email"
+        value="{{ (settings.email if settings and settings.email else default_email) }}"
+        placeholder="you@example.com"
+        {% if not email_editable %}disabled aria-disabled="true"{% else %}required{% endif %}
+      />
+      {% if not email_editable %}
+        <small class="muted">Email comes from your Spotify profile and can't be edited here.</small>
+        <input type="hidden" name="email" value="{{ settings.email }}" />
+      {% endif %}
+    </div>
+
+    <div class="field">
+      <label for="location">Location</label>
+      {% set current_loc = (settings.location_value if settings else '') %}
+      <div class="select-wrap">
+        <select id="location" name="location" required>
+          <option value="" disabled {% if not current_loc %}selected{% endif %}>-- Select location --</option>
+          {% set options = [
+            ("Αττική",".area1"),
+            ("Αχαΐα",".area1012"),
+            ("Δράμα",".area1016"),
+            ("Ηράκλειο",".area1029"),
+            ("Θεσσαλονίκη",".area1060"),
+            ("Ιωάννινα",".area1031"),
+            ("Καστοριά",".area1034"),
+            ("Λάρισα",".area1039"),
+            ("Μαγνησία",".area1042"),
+            ("Μεσσηνία",".area1043"),
+            ("Ξάνθη",".area1044"),
+            ("Ροδόπη",".area1049"),
+            ("Χανιά",".area1057"),
+          ] %}
+          {% for label, value in options %}
+            <option value="{{ value }}" {% if current_loc and current_loc == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="frequency">Email frequency</label>
+      {% set current_freq = (settings.frequency if settings and settings.frequency else 'weekly') %}
+      <div class="select-wrap">
+        <select id="frequency" name="frequency" required>
+          {% set freqs = ["weekly", "biweekly", "monthly"] %}
+          {% for f in freqs %}
+            <option value="{{ f }}" {% if current_freq == f %}selected{% endif %}>{{ f|capitalize }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn">Save settings</button>
+    </div>
+  </form>
+
+  <!-- Unsubscribe panel -->
+  <div class="card--danger">
+    <div class="row">
+      <div>
+        <h4>Unsubscribe</h4>
+        <p>Stop all emails and remove your data from NeverMiss.</p>
+      </div>
+      <form action="/unsubscribe" method="get" style="margin:0;">
+        <button type="submit" class="btn btn--danger">Unsubscribe</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

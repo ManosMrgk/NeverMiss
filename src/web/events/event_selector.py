@@ -4,21 +4,22 @@ import json
 from dataclasses import asdict
 from typing import Optional, List
 from dotenv import load_dotenv
-from spotify_data import gather_spotify_data
-from event_gatherer import scrape_more
+from events.spotify_data import gather_spotify_data
+from events.event_gatherer import scrape_more
 from models.events import Event
-from utils.gemini import call_gemini
-from utils.prompting import build_system_prompt, build_user_prompt
+from events.event_utils.gemini import call_gemini
+from events.event_utils.prompting import build_system_prompt, build_user_prompt
 
 
-def get_upcoming_events(start_date: Optional[str], days: int) -> List[Event]:
+def get_upcoming_events(start_date: Optional[str], days: int, location_code: Optional[str] = None) -> List[Event]:
     events = scrape_more(
-        attica_only=True,
+        location_only=True,
         start_date_str=start_date, days=days,
-        headful=False, engine="chromium",
-        max_attica_reloads=1,
+        headful=False, engine="firefox",
+        max_location_reloads=1,
         debug=True,
         use_fast_mode=True,
+        location_code=location_code,
     )
 
     # for e in events:
@@ -38,14 +39,20 @@ def get_spotify_favorites() -> dict:
     }
 
 # ========== Entry point ==========
-def get_recommended_events(start_date: Optional[str] = None, days: int = 7) -> List[Event]:
+def get_recommended_events(start_date: Optional[str] = None, days: int = 7, events: Optional[List[Event]] = None, spotify_data: Optional[dict[str, list[str]]] = None) -> List[Event]:
     load_dotenv()  # loads GOOGLE_API_KEY from .env
     api_key = os.getenv("GOOGLE_API_KEY")
-    model_name = os.getenv("GOOGLE_MODEL_NAME") or "gemini-2.5-flash"
+    model_name = os.getenv("GOOGLE_MODEL_NAME") or "gemini-2.0-flash-exp" #"gemini-2.5-flash"
     system_prompt = build_system_prompt()
 
-    upcoming = get_upcoming_events(start_date=start_date, days=days)
-    spotify = get_spotify_favorites()
+    if events:
+        upcoming = events
+    else:
+        upcoming = get_upcoming_events(start_date=start_date, days=days)
+    if spotify_data:
+        spotify = spotify_data
+    else:
+        spotify = get_spotify_favorites()
 
     user_prompt = build_user_prompt(spotify, upcoming)
     print("Calling Gemini for event selection...", end="", flush=True)

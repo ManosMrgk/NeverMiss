@@ -1,5 +1,5 @@
 """
-Fast scraper for more.com (music) → Attica for selected date range.
+Fast scraper for more.com (music) → for selected date range.
 """
 from __future__ import annotations
 import argparse, json, pathlib
@@ -8,8 +8,8 @@ from datetime import date, datetime
 from typing import List, Optional, Tuple, Dict, Any
 from playwright.sync_api import sync_playwright, Page, BrowserContext, Route, Request
 from models.events import Event
-from utils.time_utils import G_MONTHS_LABEL, athens_now, overlaps_range, parse_greek_date_or_range, parse_iso_date, range_bounds
-from utils.logger import log, info, warn
+from events.event_utils.time_utils import G_MONTHS_LABEL, athens_now, overlaps_range, parse_greek_date_or_range, parse_iso_date, range_bounds
+from events.event_utils.logger import log, info, warn
 
 BASE = "https://www.more.com/gr-el/tickets/music/"
 
@@ -122,7 +122,7 @@ def try_open_location_dropdown(page: Page, *, debug: bool) -> bool:
     return safe_click(trigger, debug=debug)
 
 
-def select_attica(page: Page, *, max_reload: int, debug: bool) -> bool:
+def select_location(page: Page, *, max_reload: int, debug: bool, location_code: str = ".area1") -> bool:
     for attempt in range(max_reload + 1):
         accept_and_clear_overlays(page, debug=debug)
         try_open_location_dropdown(page, debug=debug)
@@ -131,9 +131,11 @@ def select_attica(page: Page, *, max_reload: int, debug: bool) -> bool:
                 page.locator('a[aria-owns="location-cities"]').first.click(timeout=800)
         except Exception:
             pass
-        attica = page.locator('ul.mm-listview a[data-filter=".area1"]').first
-        if attica.count() > 0 and attica.is_visible():
-            if safe_click(attica, debug=debug):
+        if not location_code or location_code.strip() == "":
+            location_code = ".area1"  # default to Attica
+        location = page.locator('ul.mm-listview a[data-filter="'+location_code+'"]').first
+        if location.count() > 0 and location.is_visible():
+            if safe_click(location, debug=debug):
                 page.keyboard.press("Escape")
                 page.wait_for_timeout(100)
                 return True
@@ -213,7 +215,7 @@ JS_EXTRACT = """
 })
 """
 
-def collect_events(page: Page, range_a: datetime, range_b: datetime, *, attica_only: bool, debug: bool) -> List[Event]:
+def collect_events(page: Page, range_a: datetime, range_b: datetime, *, location_only: bool, location_title: str = "Αττική", debug: bool) -> List[Event]:
     items: List[Dict[str, Any]] = page.evaluate(JS_EXTRACT)
     out: List[Event] = []
     for it in items:
@@ -233,7 +235,7 @@ def collect_events(page: Page, range_a: datetime, range_b: datetime, *, attica_o
         venue = it.get('venue')
         city = it.get('city')
         region = it.get('region')
-        if attica_only and (region or '').strip() != 'Αττική':
+        if location_only and (region or '').strip() != location_title:
             continue
         if not overlaps_range(start_dt, end_dt, range_a, range_b):
             continue
@@ -274,11 +276,13 @@ def make_context(pw, engine: str, headful: bool, *, debug: bool) -> Tuple[Browse
 
 # ---------- driver ----------
 
-def scrape_more(attica_only: bool, start_date_str: Optional[str], days: int,
+def scrape_more(location_only: bool, start_date_str: Optional[str], days: int,
                 headful: bool, engine: str,
-                max_attica_reloads: int,
+                max_location_reloads: int,
                 debug: bool,
                 use_fast_mode: bool,
+                location_code: Optional[str] = ".area1",
+                location_title: str = "Αττική",
                 debug_dump: Optional[str] = ".more_list_debug.html") -> List[Event]:
     if start_date_str:
         sd = datetime.strptime(start_date_str, "%Y-%m-%d").date()
@@ -292,10 +296,10 @@ def scrape_more(attica_only: bool, start_date_str: Optional[str], days: int,
         accept_and_clear_overlays(page, debug=debug)
         wait_ready(page, debug=debug)
 
-        if not use_fast_mode and attica_only:
-            ok = select_attica(page, max_reload=max_attica_reloads, debug=debug)
+        if not use_fast_mode and location_only:
+            ok = select_location(page, max_reload=max_location_reloads, debug=debug, location_code=location_code)
             if not ok:
-                warn("Proceeding without UI Attica filter (will DOM-filter by region).")
+                warn("Proceeding without UI Location filter (will DOM-filter by region).")
 
         if not use_fast_mode:
             set_date_range_filters(page, sd, (a + (b - a)).date(), debug=debug)
@@ -303,7 +307,7 @@ def scrape_more(attica_only: bool, start_date_str: Optional[str], days: int,
         # Load all cards quickly
         fast_lazy_scroll(page, debug=debug)
 
-        events = collect_events(page, a, b, attica_only=attica_only, debug=debug)
+        events = collect_events(page, a, b, location_only=location_only, location_title=location_title, debug=debug)
 
         if not events and debug_dump:
             try:
@@ -338,30 +342,34 @@ def main(argv=None) -> int:
     now = athens_now()
     ap = argparse.ArgumentParser(description="Scrape more.com (music) → Attica for current month (fast)")
     ap.add_argument("--start", type=str, default=None, help="Start date YYYY-MM-DD (default: today in Europe/Athens)")
+    ap.add_argument("--location_code", type=str, default="", help="Optional location code to filter events (default: Attica's code)")
+    ap.add_argument("--location_title", type=str, default="Αττική", help="Location title for filtering (default: 'Αττική')")
     ap.add_argument("--days", type=int, default=1, help="Number of days (inclusive)")
-    ap.add_argument("--attica-only", action="store_true", default=True)
+    ap.add_argument("--location-only", action="store_true", default=True)
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--headful", action="store_true")
     ap.add_argument("--engine", choices=["firefox","chromium"], default="chromium")
     ap.add_argument("--debug", action="store_true", help="verbose debug logs on stderr")
-    ap.add_argument("--max-attica-reloads", type=int, default=1)
+    ap.add_argument("--max-location-reloads", type=int, default=1)
     ap.add_argument("--fast", action="store_true", help="Skip UI filters; rely on DOM filters only (much faster)")
     args = ap.parse_args(argv)
 
     items = scrape_more(
-        attica_only=args.attica_only,
+        location_only=args.location_only,
         start_date_str=args.start, days=args.days,
         headful=args.headful, engine=args.engine,
-        max_attica_reloads=args.max_attica_reloads,
+        max_location_reloads=args.max_location_reloads,
         debug=args.debug,
         use_fast_mode=args.fast,
+        location_code=args.location_code,
+        location_title=args.location_title,
     )
     if args.json:
         if args.start:
             base = args.start
         else:
             base = now.strftime("%Y-%m-%d")
-        default_name = f"more-{base}-{args.days}{'-attica' if args.attica_only else ''}.json"
+        default_name = f"more-{base}-{args.days}{'-'+args.location_title if args.location_only else ''}.json"
         out_path = args.out or pathlib.Path(default_name)
         out_path.parent.mkdir(parents=True, exist_ok=True)
 

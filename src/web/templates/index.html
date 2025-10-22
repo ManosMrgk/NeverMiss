@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .hero {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 60px 20px 80px;
+  }
+
+  .hero__badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, rgba(134,168,255,.15), rgba(168,134,255,.15));
+    border: 1px solid rgba(134,168,255,.3);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+
+  .hero__title {
+    font-size: clamp(36px, 8vw, 64px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 24px;
+    background: linear-gradient(135deg, #ffffff, #86a8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero__subtitle {
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0 0 32px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero__story {
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 48px auto 48px;
+    max-width: 650px;
+    text-align: left;
+  }
+
+  .hero__story h3 {
+    font-size: 20px;
+    margin: 0 0 16px;
+    color: var(--text);
+  }
+
+  .hero__story p {
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0 0 12px;
+    font-size: 16px;
+  }
+
+  .hero__story p:last-child {
+    margin-bottom: 0;
+  }
+
+  .hero__cta {
+    margin-top: 40px;
+  }
+
+  .btn--hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 32px;
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1DB954, #1ed760);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all .2s ease;
+    box-shadow: 0 4px 20px rgba(29,185,84,.3);
+    text-decoration: none;
+  }
+
+  .btn--hero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(29,185,84,.4);
+    background: linear-gradient(135deg, #1ed760, #1DB954);
+  }
+
+  .btn--hero svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .hero__features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin: 64px 0 48px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .feature {
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: left;
+    transition: all .2s ease;
+  }
+
+  .feature:hover {
+    background: rgba(255,255,255,.05);
+    border-color: rgba(134,168,255,.3);
+    transform: translateY(-2px);
+  }
+
+  .feature__icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .feature h4 {
+    font-size: 18px;
+    margin: 0 0 8px;
+    color: var(--text);
+  }
+
+  .feature p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .hero__footer {
+    margin-top: 48px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 40px 20px 60px;
+    }
+
+    .hero__story {
+      padding: 24px;
+    }
+
+    .hero__features {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="hero">
+  
+  
+  <h1 class="hero__title">Never Miss Another Show</h1>
+  <div class="hero__badge">🎵 Powered by Your Music Taste</div>
+  <p class="hero__subtitle">
+    Get personalized concert recommendations in Greece based on your Spotify listening history.
+  </p>
+
+  <div class="hero__cta">
+    <a class="btn--hero" href="/auth/spotify">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+      </svg>
+      Continue with Spotify
+    </a>
+  </div>
+
+  <div class="hero__story">
+    <h3>Why NeverMiss?</h3>
+    <p>
+      Two years ago, I deleted social media. My mental health improved, I got more free time, 
+      and life felt lighter. But there was one downside: I kept missing concerts.
+    </p>
+    <p>
+      Shows by artists I love, happening in my city—and I'd only find out after they were over. 
+      Without Instagram or Facebook, I had no way to discover these events.
+    </p>
+    <p>
+      <strong>NeverMiss</strong> solves this. It connects to your Spotify, learns your music taste, 
+      and emails you personalized concert recommendations in Greece. Simple, focused, and built 
+      for people who want to stay connected to live music without the noise of social media.
+    </p>
+  </div>
+
+  <div class="hero__features">
+    <div class="feature">
+      <span class="feature__icon">🎸</span>
+      <h4>Smart Matching</h4>
+      <p>We analyze your Spotify favorites and match you with concerts you'll actually want to attend.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature__icon">📍</span>
+      <h4>Local Events</h4>
+      <p>Discover shows across Greece. From Athens to Thessaloniki and everywhere in between.</p>
+    </div>
+
+    <div class="feature">
+      <span class="feature__icon">📧</span>
+      <h4>Zero Noise</h4>
+      <p>Just a weekly email with handpicked recommendations. No feeds, no distractions, no ads.</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}NeverMiss • Not found{% endblock %}
+{% block content %}
+<style>
+  .hero404{
+    display:grid; gap:16px; place-items:center; text-align:center;
+    padding:42px 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:0 10px 26px var(--shadow);
+  }
+  .hero404__badge{
+    display:inline-grid; place-items:center;
+    width:76px; height:76px; border-radius:18px;
+    background: radial-gradient(closest-side, var(--accent), transparent 65%);
+    box-shadow: inset 0 0 24px rgba(134,168,255,.35);
+    color:#fff; font-size:36px;
+  }
+  .hero404 h1{ margin:10px 0 6px; font-size:28px; letter-spacing:.3px; }
+  .hero404 p{ margin:0; color:var(--muted); }
+  .hero404 small{ color:var(--muted); }
+
+  .cta-row{
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+    margin-top:16px;
+  }
+</style>
+
+<div class="hero404">
+  <div class="hero404__badge" aria-hidden="true">🔎</div>
+  <h1>We couldn’t find that page</h1>
+  <p>The path <code>{{ path }}</code> doesn’t exist or may have moved.</p>
+  <div class="cta-row">
+    <a class="btn" href="{{ url_for('index') }}">Go to homepage</a>
+    {% if session.get('spotify') %}
+      <a class="btn btn--ghost" href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+    {% set user_uuid = session.get('user_uuid') %}
+    {% if user_uuid %}
+      <a class="btn btn--ghost" href="{{ url_for('suggestions', user_uuid=user_uuid) }}">
+        View my suggestions
+      </a>
+    {% endif %}
+  </div>
+  <small>If you believe this is an error, try the homepage or your suggestions.</small>
+</div>
+{% endblock %}

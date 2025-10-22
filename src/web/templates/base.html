@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}NeverMiss{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#101833; --text:#e8eeff; --muted:#9fb0d6; --accent:#86a8ff;
+      --chip:#2a3361; --chip-border:rgba(255,255,255,.08);
+      --card:#0f1a3a; --card-hover:#13234f; --line:rgba(255,255,255,.08);
+      --shadow:rgba(0,0,0,.35); --success:#10b981; --danger:#dc2626;
+      --flash-bg:#0e1a3c; --flash-border:rgba(255,255,255,.10);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f7fb; --panel:#ffffff; --text:#0e1330; --muted:#5b6a88; --accent:#3a63ff;
+        --chip:#eef2ff; --chip-border:#e5e7eb; --card:#ffffff; --card-hover:#f5f7ff;
+        --line:#e5e7eb; --shadow:rgba(0,0,0,.12);
+        --flash-bg:#f5f7ff; --flash-border:#e5e7eb;
+      }
+    }
+
+    body{
+      margin:0;
+      color:var(--text);
+      font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% -10%, #1a2353 0%, var(--bg) 60%, #090e1b 100%) fixed;
+      min-height:100vh;
+    }
+    .container{ max-width:1100px; margin:0 auto; padding:28px 18px 64px; }
+
+    .site-header{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 10px 26px var(--shadow);
+      margin-bottom:18px;
+      position:relative; overflow:hidden;
+    }
+
+    /* Make brand a link */
+    .brand-link{
+      display:flex; align-items:center; gap:10px;
+      color:inherit; text-decoration:none;
+    }
+    .brand-link:focus-visible{
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 10px;
+    }
+    .logo{
+      width:28px; height:28px; border-radius:8px;
+      background: radial-gradient(closest-side, var(--accent), transparent 70%);
+      box-shadow: 0 0 20px rgba(134,168,255,.35) inset;
+      flex:0 0 28px;
+    }
+    .title{ margin:0; font-size:18px; letter-spacing:.3px; }
+
+    .actions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      height:36px; padding:0 12px; border-radius:10px;
+      font-weight:600; font-size:14px; text-decoration:none; cursor:pointer;
+      border:1px solid transparent; background:var(--accent); color:#fff;
+      transition: filter .15s ease, opacity .15s ease, transform .02s ease;
+    }
+    .btn:hover{ filter:brightness(.95); }
+    .btn:active{ transform:translateY(1px); }
+    .btn--ghost{ background:transparent; color:var(--text); border-color:var(--line); }
+    .btn--success{ background: var(--success); color:#fff; }
+    .btn--danger{ background: var(--danger); color:#fff; }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:18px;
+      box-shadow:0 10px 26px var(--shadow);
+    }
+
+    .flash{
+      margin:12px 0 18px;
+      background: var(--flash-bg);
+      border:1px solid var(--flash-border);
+      color: var(--text);
+      border-radius:12px; padding:12px 14px;
+    }
+    .flash--success{ border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.10); }
+    .flash--danger{ border-color: rgba(220,38,38,.35); background: rgba(220,38,38,.10); }
+
+    main{ display:block; margin-top:18px; }
+    footer{ color:var(--muted); text-align:center; margin:26px 0 0; font-size:12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="site-header">
+      <a class="brand-link" href="{{ url_for('index') }}" aria-label="Go to homepage">
+        <div class="logo" aria-hidden="true"></div>
+        <h1 class="title">NeverMiss</h1>
+      </a>
+      <div class="actions">
+        {% if session.get('spotify') %}
+          <span class="btn btn--ghost" style="cursor:default;">Signed in</span>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if get_flashed_messages() %}
+      <div class="flash flash--success">
+        {% for m in get_flashed_messages() %}
+          <div>{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if request.args.get('unsubscribed') %}
+      <div class="flash flash--danger">
+        <strong>Unsubscribed successfully.</strong> We are sad to see you go.
+      </div>
+    {% endif %}
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+      &copy; {{ current_year }} NeverMiss. Curated events without the doomscroll.
+    </footer>
+  </div>
+</body>
+</html>

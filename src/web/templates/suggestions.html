@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  :root{
+    --bg:#0b1020;--panel:#101833;--muted:#9fb0d6;--text:#e8eeff;--accent:#86a8ff;
+    --chip:#2a3361;--chip-border:rgba(255,255,255,.08);
+    --card:#0f1a3a;--card-hover:#13234f;--shadow:rgba(0,0,0,.35);
+  }
+  .wrap{
+    min-height:100%;
+    background:
+      radial-gradient(1200px 800px at 20% -10%, #1a2353 0%, #0b1020 60%, #090e1b 100%) fixed;
+  }
+  .container{max-width:1100px;margin:0 auto;padding:28px 18px 64px;}
+  /* Hero */
+  .hero{
+    position:relative;
+    border-radius:20px;
+    padding:24px 20px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.06);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    box-shadow:0 14px 40px var(--shadow);
+  }
+  .hero::after{
+    content:""; position:absolute; inset:-40% -30% auto auto; height:260px; width:260px;
+    background:radial-gradient(closest-side, rgba(122,162,255,.22), transparent 70%);
+    transform:rotate(25deg);
+  }
+  .title{margin:0 0 4px; font-size:28px; letter-spacing:.3px;}
+  .sub{color:var(--muted); font-size:14px; margin:0;}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
+  .chip{font-size:12px; color:var(--text); background:var(--chip); border:1px solid var(--chip-border);
+        padding:6px 10px; border-radius:999px; display:inline-flex; gap:8px; align-items:center;}
+  .dot{width:6px; height:6px; border-radius:999px; background:var(--accent); display:inline-block;}
+
+  /* Section */
+  section{
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:16px;
+    padding:18px;
+    margin:22px 0 28px;
+    box-shadow:0 10px 30px var(--shadow);
+  }
+  .section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:12px;}
+  h2{font-size:18px; margin:0; color:var(--accent); letter-spacing:.2px;}
+  .count{font-size:12px; color:var(--muted); background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+         padding:4px 8px; border-radius:999px;}
+
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px;}
+  .card{
+    display:block; text-decoration:none; color:inherit;
+    background:var(--card); border:1px solid rgba(255,255,255,.06);
+    border-radius:16px; overflow:hidden;
+    transition:transform .15s ease, background .15s ease, box-shadow .15s ease;
+    box-shadow:0 6px 22px rgba(0,0,0,.28);
+  }
+  .card:hover{background:var(--card-hover); transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.38);}
+
+  .thumb{position:relative; width:100%; aspect-ratio:16/9; background:#0c1636; border-bottom:1px solid rgba(255,255,255,.06);}
+  .thumb img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+  .thumb--ph{display:grid; place-items:center; color:var(--muted);}
+  .thumb--icon{font-size:42px; opacity:.9;}
+
+  .meta{padding:12px 12px 14px; display:grid; gap:6px;}
+  .date{color:var(--muted); font-size:12px;}
+  .title-card{font-weight:700; font-size:16px; line-height:1.35;}
+  .where{color:var(--muted); font-size:13px;}
+
+  .empty-all{
+    margin:22px 0 0;
+    padding:18px;
+    border-radius:14px;
+    border:1px dashed rgba(255,255,255,.12);
+    background:rgba(255,255,255,.03);
+    color:var(--muted);
+    text-align:center;
+  }
+
+  @media (prefers-color-scheme:light){
+    :root{--bg:#f6f7fb;--panel:#fff;--muted:#5b6a88;--text:#0e1330;--accent:#3a63ff;--chip:#eef2ff;--chip-border:#e5e7eb;--card:#fff;--card-hover:#f5f7ff;--shadow:rgba(0,0,0,.12);}
+    .hero, section{box-shadow:0 10px 26px var(--shadow);}
+  }
+</style>
+
+<div class="wrap">
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+      <h1 class="title">Recommendations for {{ user_name }}</h1>
+      <p class="sub">Curated for you • {{ today_str }}</p>
+    </div>
+
+    {% macro card(ev) -%}
+      {% set img = ev.image or '' %}
+      {% set loc_parts = [ev.venue, ev.city, ev.region]
+          | select('string') | reject('equalto','') | list %}
+      {% set where = ' · '.join(loc_parts) if loc_parts else 'Location TBA' %}
+      <a class="card" href="{{ ev.url }}" target="_blank" rel="noopener noreferrer">
+        {% if img %}
+          <div class="thumb"><img src="{{ img }}" alt=""></div>
+        {% else %}
+          <div class="thumb thumb--ph"><div class="thumb--icon">🎵</div></div>
+        {% endif %}
+        <div class="meta">
+          <div class="date">{{ fmt_event_date(ev) }}</div>
+          <div class="title-card">{{ ev.title }}</div>
+          <div class="where">{{ where }}</div>
+        </div>
+      </a>
+    {%- endmacro %}
+
+    {% macro section(title, items) -%}
+      {% if items and items|length %}
+        <section>
+          <div class="section-head">
+            <h2>{{ title }}</h2>
+            <span class="count">{{ items|length }}</span>
+          </div>
+          <div class="grid">
+            {% for e in items %} {{ card(e) }} {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+    {%- endmacro %}
+
+    {# render only non-empty buckets #}
+    {% set any_items = (buckets.this_week|length + buckets.this_weekend|length + buckets.next_week|length + buckets.coming_soon|length) > 0 %}
+
+    {% if weekday != 4 %} {{ section("This week", buckets.this_week) }} {% endif %}
+    {{ section("This weekend", buckets.this_weekend) }}
+    {{ section("Next week", buckets.next_week) }}
+    {{ section("Coming soon", buckets.coming_soon) }}
+
+    {% if not any_items %}
+      <div class="empty-all">
+        No recommendations tailored to your music taste right now.
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
