@@ -16,7 +16,7 @@ def _start_scheduler(app: Flask) -> None:
     sched.add_job(
         run_suggestions_job,
         trigger="cron",
-        hour=9, minute=30,
+        hour=5, minute=30,
         id="daily_suggestions",
         coalesce=True,
         max_instances=1,

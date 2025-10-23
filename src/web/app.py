@@ -12,11 +12,11 @@ from typing import List, Optional, Tuple
 import logging, sys
 import requests
 from dotenv import find_dotenv, load_dotenv
-from flask import Flask, redirect, render_template, request, session, url_for, jsonify, abort
+from flask import Flask, redirect, render_template, request, send_from_directory, session, url_for, jsonify, abort
 from jobs.scheduler import _start_scheduler
 from utils.background import submit_background
 from utils.session_utils import TokenBundle, clear_tokens, get_tokens, set_tokens
-from utils.settings import CLIENT_ID, CLIENT_SECRET, FLASK_SECRET, FREQ_VALUES, REDIRECT_URI, SCOPES, SPOTIFY_API_BASE, SPOTIFY_AUTH_URL, SPOTIFY_TOKEN_URL
+from utils.settings import CLIENT_ID, CLIENT_SECRET, FLASK_SECRET, FREQ_VALUES, INVITE_FORM_URL, REDIRECT_URI, SCOPES, SPOTIFY_API_BASE, SPOTIFY_AUTH_URL, SPOTIFY_TOKEN_URL
 from utils.callback import callback
 from utils.location_utils import LABEL_BY_VALUE, LOCATION_CHOICES, LOCATION_VALUES
 from utils.db_utils import DB_PATH, delete_user_by_uuid, get_latest_user_suggested_events_list, init_db, get_user_by_uuid, update_preferences
@@ -160,7 +160,9 @@ def index():
         )
     return render_template("index.html")
 
-
+@app.route('/favicon.ico')
+def favicon_ico():
+    return send_from_directory(app.static_folder, 'favicon.ico', mimetype='image/x-icon')
 
 @app.get("/auth/spotify")
 def auth_spotify():
@@ -361,6 +363,8 @@ def suggestions(user_uuid: str):
         today = datetime.now(local_tz()).date()
 
     events: List[Event] = get_latest_user_suggested_events_list(user_uuid)
+    if events is None:
+        events = []
     print(f"Loaded {len(events)} suggested events for user {user_uuid}")
     buckets = _bucket_events(events, today=today)
 
@@ -394,6 +398,11 @@ def unsubscribe():
 
     # Show a simple success message on the homepage
     return redirect(url_for("index", unsubscribed=1))
+
+
+@app.get("/invite-only")
+def invite_only_page():
+    return render_template("invite_only.html", form_url=INVITE_FORM_URL)
 
 @app.errorhandler(404)
 def not_found(e):

@@ -22,3 +22,5 @@ SCOPES = [
     "user-read-email",       # uncomment later when you want email
     # add more scopes as needed
 ]
+
+INVITE_FORM_URL = os.getenv("INVITE_FORM_URL", "")

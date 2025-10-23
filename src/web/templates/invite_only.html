@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}NeverMiss • Invite Only{% endblock %}
+{% block content %}
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+
+  .invite-container {
+    max-width: 680px;
+    margin: 0 auto;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .invite-hero {
+    position: relative;
+    border-radius: 24px;
+    padding: 56px 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(134, 168, 255, 0.08), rgba(16, 185, 129, 0.05));
+    box-shadow: 0 24px 72px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+  }
+
+  .invite-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+    animation: shimmer 3s infinite;
+  }
+
+  .invite-hero::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(135deg, rgba(134, 168, 255, 0.2), rgba(16, 185, 129, 0.2));
+    border-radius: 24px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .invite-hero:hover::after {
+    opacity: 1;
+  }
+
+  .invite-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    display: inline-block;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .invite-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0 0 16px;
+    color: var(--text);
+    background: linear-gradient(120deg, #e8eeff, #86a8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .invite-description {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 auto 32px;
+    max-width: 480px;
+  }
+
+  .invite-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .btn-invite {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 32px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+
+  .btn-invite--primary {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-invite--primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-invite--primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-invite--primary:hover::before {
+    left: 100%;
+  }
+
+  .btn-invite--secondary {
+    background: transparent;
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-invite--secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(134, 168, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .invite-note {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(159, 176, 214, 0.7);
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+  }
+
+  .invite-note strong {
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  .invite-divider {
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    margin: 28px auto;
+  }
+
+  @media (max-width: 640px) {
+    .invite-container {
+      padding: 20px;
+      min-height: 50vh;
+    }
+
+    .invite-hero {
+      padding: 40px 28px;
+    }
+
+    .invite-icon {
+      font-size: 52px;
+    }
+
+    .invite-title {
+      font-size: 28px;
+    }
+
+    .invite-description {
+      font-size: 16px;
+    }
+
+    .invite-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .btn-invite {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="invite-container">
+  <div class="invite-hero">
+    <div class="invite-icon">🎟️</div>
+    
+    <h2 class="invite-title">You're Almost In</h2>
+    
+    <p class="invite-description">
+      NeverMiss is currently in private beta. Your Spotify account isn't on our tester list yet, 
+      but we'd love to have you join.
+    </p>
+
+    <div class="invite-actions">
+      <a class="btn-invite btn-invite--primary" href="{{ form_url }}" target="_blank" rel="noopener">
+        Request Access
+      </a>
+      <a class="btn-invite btn-invite--secondary" href="{{ url_for('index') }}">
+        Back to Home
+      </a>
+    </div>
+
+    <div class="invite-divider"></div>
+
+    <div class="invite-note">
+      <strong>Pro tip:</strong> Use the email where you want to receive concert recommendations. 
+      We'll notify you the moment you're added to the beta.
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    try {
+      var target = "{{ desired_url|default(url_for('invite_only_page')) }}";
+      if (location.pathname.indexOf('/callback') === 0) {
+        history.replaceState({}, '', target);
+      }
+    } catch (e) { /* noop */ }
+  })();
+</script>
+{% endblock %}

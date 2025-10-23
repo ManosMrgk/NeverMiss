@@ -74,7 +74,7 @@ docs/_build/
 # PyBuilder
 .pybuilder/
 target/
-
+src/web/utils/nevermiss.db
 # Jupyter Notebook
 .ipynb_checkpoints
 

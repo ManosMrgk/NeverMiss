@@ -2,9 +2,22 @@ import time
 import requests
 from utils.background import submit_background
 from utils.tastes import fetch_and_store_tastes
-from utils.settings import CLIENT_ID, REDIRECT_URI, SPOTIFY_API_BASE, SPOTIFY_TOKEN_URL
-from utils.session_utils import TokenBundle, set_tokens
-from flask import redirect, session, url_for, Flask
+from utils.settings import CLIENT_ID, INVITE_FORM_URL, REDIRECT_URI, SPOTIFY_API_BASE, SPOTIFY_TOKEN_URL
+from utils.session_utils import TokenBundle, clear_tokens, set_tokens
+from flask import redirect, render_template, session, url_for, Flask
+
+def _allowlist_block(resp) -> bool:
+    """Return True if Spotify indicates the user isn't allowed in dev mode."""
+    if not resp is None:
+        if resp.status_code == 403:
+            return True
+        try:
+            txt = resp.text or ""
+            low = txt.lower()
+            return ("not registered" in low and "developer" in low) or ("restricted" in low and "client" in low)
+        except Exception:
+            pass
+    return False
 
 def callback(app: Flask, code, verifier):
     """Callback to handle post-authentication logic."""
@@ -36,6 +49,17 @@ def callback(app: Flask, code, verifier):
     if me.status_code != 200:
         session.pop("pkce", None)
         session.pop("oauth_state", None)
+        if _allowlist_block(me):
+            session.pop("pkce", None)
+            session.pop("oauth_state", None)
+            clear_tokens()
+            
+            return render_template(
+                "invite_only.html",
+                form_url=INVITE_FORM_URL,
+                desired_url=url_for("invite_only_page"),
+            ), 400
+
         return f"Failed to fetch profile: {me.text}", 400
 
     profile = me.json() or {}
