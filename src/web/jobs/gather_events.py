@@ -16,6 +16,16 @@ def _already_snapshotted_today(last_ts: Optional[int], now_ts: int) -> bool:
 
     return time.gmtime(last_ts)[:3] == time.gmtime(now_ts)[:3]
 
+def save_city_events_snapshot(events: List[Event], location_value: str, location_label: str, generated_at: int) -> None:
+    """Saves a snapshot of events for a given city/location."""
+    payload = {
+        "generated_at": generated_at,
+        "location_value": location_value,
+        "location_label": location_label,
+        "events": [asdict(e) for e in events],
+    }
+    insert_city_events_snapshot(location_value, location_label or "", json.dumps(payload, ensure_ascii=False))
+
 def run_city_events_job(app) -> None:
     """Once a day: for each location selected by at least one user,
     save a snapshot of available events (dummy for now) into city_events_daily.
@@ -36,15 +46,9 @@ def run_city_events_job(app) -> None:
                     continue
 
 
-                events = get_upcoming_events(start_date=None, days=30)
+                events = get_upcoming_events(start_date=None, days=30, location_code=value)
                 app.logger.info("[city-events] gathered %d events for %s (%s).", len(events), label, value)
-                payload = {
-                    "generated_at": now_ts,
-                    "location_value": value,
-                    "location_label": label,
-                    "events": [asdict(e) for e in events],
-                }
-                insert_city_events_snapshot(value, label or "", json.dumps(payload, ensure_ascii=False))
+                save_city_events_snapshot(events, location_value=value, location_label=label, generated_at=now_ts)
                 app.logger.info("[city-events] snapshotted %d events for %s (%s).", len(events), label, value)
             except Exception as e:
                 app.logger.exception("[city-events] failed for %s: %s", value, e)

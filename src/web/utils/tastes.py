@@ -8,7 +8,7 @@ from flask import Flask
 
 SPOTIFY_API_BASE = "https://api.spotify.com/v1"
 
-def _fetch_top_artists(access_token: str, time_range: str = "medium_term", limit: int = 40) -> list[dict]:
+def _fetch_top_artists(access_token: str, time_range: str = "medium_term", limit: int = 50) -> list[dict]:
     r = requests.get(
         f"{SPOTIFY_API_BASE}/me/top/artists",
         params={"time_range": time_range, "limit": limit},

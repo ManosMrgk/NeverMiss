@@ -42,7 +42,7 @@ def get_spotify_favorites() -> dict:
 def get_recommended_events(start_date: Optional[str] = None, days: int = 7, events: Optional[List[Event]] = None, spotify_data: Optional[dict[str, list[str]]] = None) -> List[Event]:
     load_dotenv()  # loads GOOGLE_API_KEY from .env
     api_key = os.getenv("GOOGLE_API_KEY")
-    model_name = os.getenv("GOOGLE_MODEL_NAME") or "gemini-2.0-flash-exp" #"gemini-2.5-flash"
+    model_name = os.getenv("GOOGLE_MODEL_NAME") or "gemini-2.5-flash" #"gemini-2.0-flash-exp"
     system_prompt = build_system_prompt()
 
     if events:

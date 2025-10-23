@@ -92,7 +92,7 @@ def get_all_users() -> List[dict]:
         rows = con.execute("""
             SELECT uuid as user_uuid, email, location_label, location_value, frequency
             FROM users
-            WHERE user_uuid IS NOT NULL
+            WHERE uuid IS NOT NULL
         """).fetchall()
         return [dict(r) for r in rows]
 
@@ -163,7 +163,30 @@ def get_latest_user_suggested_events_list(user_uuid: str) -> Optional[Event]:
         return []
     except Exception:
         return [] 
-             
+
+def get_users_without_suggestions() -> List[dict]:
+    """
+    Return a list of user_uuid for users that have ZERO suggestion records.
+    """
+    with _connect() as con:
+        rows = con.execute("""
+            SELECT uuid as user_uuid, email, location_label, location_value, frequency
+            FROM users u
+            LEFT JOIN user_suggestions s ON s.user_uuid = u.uuid
+            GROUP BY u.uuid
+            HAVING COUNT(s.id) = 0
+        """).fetchall()
+        return [dict(r) for r in rows]
+
+def has_any_suggestions(user_uuid: str) -> bool:
+    with _connect() as con:
+        row = con.execute("""
+            SELECT 1 FROM user_suggestions
+            WHERE user_uuid = ?
+            LIMIT 1
+        """, (user_uuid,)).fetchone()
+        return row is not None
+                
 def get_user_by_spotify_id(spotify_id: str) -> Optional[sqlite3.Row]:
     conn = _connect()
     cur = conn.cursor()
@@ -231,7 +254,7 @@ def get_latest_city_events_snapshot(location_value: str) -> Optional[Tuple[int, 
     row = cur.fetchone()
     return (int(row[0]), row[1]) if row else None
 
-def get_latest_city_events_list(location_value: str) -> Optional[Event]:
+def get_latest_city_events_list(location_value: str) -> Optional[List[Event]]:
     """
     Return the latest snapshot's events list as a list of Events.
     If no snapshot exists, return None.
