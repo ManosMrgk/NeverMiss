@@ -55,9 +55,9 @@ def get_recommended_events(start_date: Optional[str] = None, days: int = 7, even
         spotify = get_spotify_favorites()
 
     user_prompt = build_user_prompt(spotify, upcoming)
-    print("Calling Gemini for event selection...", end="", flush=True)
+    # print("Calling Gemini for event selection...", end="", flush=True)
     selected = call_gemini(api_key, system_prompt, user_prompt, model_name=model_name)
-    print("done.")
+    # print("done.")
 
     return selected
 

@@ -112,20 +112,19 @@ def get_latest_suggestion_time(user_uuid: str) -> Optional[datetime]:
 
 def insert_user_suggestions(user_uuid: str, period_key: str, payload: Dict[str, Any]) -> bool:
     """
-    Insert, respecting uniqueness (user_uuid, period_key).
-    Returns True if inserted; False if duplicate (already exists).
+    Insert or replace by (user_uuid, period_key).
+    Returns True on success (inserted or replaced).
     """
     created_at = datetime.now(timezone.utc).isoformat()
-    try:
-        with _connect() as con:
-            con.execute("""
-                INSERT INTO user_suggestions (user_uuid, period_key, created_at, payload_json)
-                VALUES (?, ?, ?, ?)
-            """, (user_uuid, period_key, created_at, json.dumps(payload, ensure_ascii=False)))
-        return True
-    except sqlite3.IntegrityError:
-        # duplicate period for user
-        return False
+    with _connect() as con:
+        con.execute("""
+            INSERT INTO user_suggestions (user_uuid, period_key, created_at, payload_json)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(user_uuid, period_key) DO UPDATE SET
+                created_at  = excluded.created_at,
+                payload_json = excluded.payload_json
+        """, (user_uuid, period_key, created_at, json.dumps(payload, ensure_ascii=False)))
+    return True
 
 def get_latest_user_suggestions(user_uuid: str) -> Optional[Dict[str, Any]]:
     with _connect() as con:

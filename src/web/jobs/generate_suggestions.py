@@ -5,9 +5,10 @@ import random
 import time
 from typing import Iterable, Literal
 from flask import Flask
-from utils.db_utils import get_all_users, get_latest_city_events_list, get_latest_suggestion_time, get_latest_user_tastes, get_users_without_suggestions, insert_user_suggestions
+from utils.db_utils import get_all_users, get_latest_city_events_list, get_latest_suggestion_time, get_latest_user_tastes, get_user_by_uuid, get_users_without_suggestions, insert_user_suggestions
 from events.event_selector import get_recommended_events, get_upcoming_events
 from jobs.gather_events import save_city_events_snapshot
+from utils.tastes import fetch_and_store_tastes
 
 Freq = Literal["weekly", "biweekly", "monthly"]
 
@@ -131,6 +132,74 @@ def _run_for_users(app: Flask,  users: list[dict], *, now: datetime) -> tuple[in
 
     return made, skipped_due, skipped_dupe
 
+def run_suggestions_for_user(app: Flask, user_uuid: str, *, force: bool = False) -> None:
+    """Generate & store suggestions for a single user. If force=True, ignore cadence."""
+    row = get_user_by_uuid(user_uuid)
+    if not row:
+        app.logger.warning("run_suggestions_for_user: missing user %s", user_uuid)
+        return
+
+    now = datetime.now(timezone.utc)
+    freq: Freq = ((row["frequency"] or "weekly").lower() if row["frequency"] else "weekly")  # type: ignore
+    if freq not in ("weekly", "biweekly", "monthly"):
+        freq = "weekly"  # type: ignore
+
+    if not force:
+        last = get_latest_suggestion_time(user_uuid)
+        if not cadence_reached(last, now, freq):
+            app.logger.info("User %s not due (freq=%s); skipping", user_uuid, freq)
+            return
+
+    period_key = compute_period_key(now, freq)
+
+    def _build_payload():
+        events = get_latest_city_events_list(location_value=row["location_value"])
+        if not events or len(events) == 0:
+            events = get_upcoming_events(start_date=None, days=30, location_code=row["location_value"])
+            now_ts = int(time.time())
+            save_city_events_snapshot(events, location_value=row["location_value"], location_label=row["location_label"], generated_at=now_ts)
+        tastes = get_latest_user_tastes(user_uuid)
+        artists, genres = ([], [])
+        if tastes:
+            artists, genres, _ = tastes
+        spotify_data = {"favorite_artists": artists, "favorite_genres": genres}
+        events = get_recommended_events(events=events, spotify_data=spotify_data)
+        return {
+            "user_uuid": user_uuid,
+            "generated_at": now.isoformat(),
+            "location": row["location_label"],
+            "frequency": freq,
+            "period_key": period_key,
+            "events": [asdict(e) for e in events],
+        }
+
+    try:
+        payload = _with_retries(_build_payload)
+    except Exception as e:
+        app.logger.exception("Failed building suggestions for %s: %s", user_uuid, e)
+        return
+
+    try:
+        inserted = insert_user_suggestions(user_uuid, period_key, payload)
+    except Exception:
+        inserted = _with_retries(lambda: insert_user_suggestions(user_uuid, period_key, payload))
+
+    if inserted:
+        app.logger.info("Suggestions stored for user=%s period=%s", user_uuid, period_key)
+    else:
+        app.logger.info("Suggestions duplicate for user=%s period=%s", user_uuid, period_key)
+
+def refresh_taste_and_generate(app, user_uuid: str, token: str):
+    """Runs in background: update tastes, then build suggestions (forced)."""
+    try:
+        fetch_and_store_tastes(app, user_uuid, token)
+    except Exception as e:
+        app.logger.exception("Taste refresh failed for %s: %s", user_uuid, e)
+    try:
+        run_suggestions_for_user(app, user_uuid, force=True)
+    except Exception as e:
+        app.logger.exception("Suggestions generation failed for %s: %s", user_uuid, e)
+        
 def run_suggestions_job(app: Flask) -> tuple[int, int, int]:
     now = datetime.now(timezone.utc)
     users = get_all_users()

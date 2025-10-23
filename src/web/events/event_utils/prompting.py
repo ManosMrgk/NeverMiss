@@ -18,7 +18,7 @@ def build_user_prompt(spotify_favorites: dict, upcoming_events: List[Event]) -> 
     Provide Spotify tastes + upcoming events. Matching heuristic:
     - Prefer titles containing favorite artists
     - Secondarily, titles or known acts that align with favorite genres
-    - Avoid low-confidence guesses
+    - Avoid low-confidence guesses but do include similar-sounding artists if relevant
     """
     payload = {
         "spotify_tastes": spotify_favorites,

@@ -24,6 +24,7 @@ from utils.tastes import fetch_and_store_tastes
 from events.event_utils.time_utils import local_tz
 from models.events import Event
 from utils.suggestion_utils import _bucket_events, _fmt_event_date
+from jobs.generate_suggestions import refresh_taste_and_generate
 
 try:
     from zoneinfo import ZoneInfo
@@ -97,12 +98,6 @@ def ensure_fresh_access_token() -> Optional[str]:
 
     set_tokens(TokenBundle(new_access, new_refresh, time.time() + expires_in))
     return new_access
-
-
-def _current_settings():
-    """Return settings dict from session or None."""
-    s = session.get("settings")
-    return s if isinstance(s, dict) else None
 
 @app.context_processor
 def inject_now():
@@ -338,7 +333,7 @@ def refresh_taste():
     if token and user_uuid:
         try:
             # Background refresh of tastes with fresh token
-            submit_background(fetch_and_store_tastes, app, user_uuid, token)
+            submit_background(refresh_taste_and_generate, app, user_uuid, token)
         except Exception as e:
             app.logger.exception("Failed to refresh taste on save: %s", e)
         return redirect(url_for("index", saved=1))
