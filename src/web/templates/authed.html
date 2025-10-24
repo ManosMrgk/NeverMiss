@@ -99,6 +99,11 @@
     <strong>Saved!</strong> Your preferences were updated.
   </div>
 {% endif %}
+{% if request.args.get('submitted') %}
+  <div class="flash flash--success">
+    <strong>Submitted!</strong> You will be notified when your suggestions are ready.
+  </div>
+{% endif %}
 
 <div class="card">
   <div class="card__head">
@@ -108,7 +113,7 @@
       {% if my_uuid %}
         <a class="btn" href="{{ url_for('suggestions', user_uuid=my_uuid) }}">View my suggestions</a>
       {% endif %}
-      <a class="btn btn--ghost" href="/refresh_taste">Refresh music taste</a>
+      <a class="btn btn--ghost" href="/refresh_taste">Refresh suggestions</a>
       <a class="btn btn--ghost" href="/logout">Log out</a>
     </div>
   </div>

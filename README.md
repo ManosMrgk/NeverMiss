@@ -4,6 +4,10 @@
 
 **Live at:** [http://nevermiss.qzz.io](http://nevermiss.qzz.io)
 
+<p align="center"> <img src="./demo/hero_page.png" alt="NeverMiss hero page" width="900"> </p>
+
+
+
 NeverMiss is a web application that analyzes your Spotify music taste and matches it with upcoming concerts and live events in Greece. Using AI-powered filtering, it delivers personalized event recommendations without requiring social media accounts.
 
 ---
@@ -11,6 +15,10 @@ NeverMiss is a web application that analyzes your Spotify music taste and matche
 ## Overview
 
 NeverMiss solves a common problem for music lovers who have left social media: discovering concerts by artists they care about. The application connects to your Spotify account, analyzes your listening habits, and sends weekly email digests with relevant local shows.
+
+
+<p align="center"> <img src="./demo/suggestions.png" alt="Suggestions preview page" width="900"><br> <em>Preview of AI-ranked suggestions before they’re sent in the newsletter.</em> </p>
+
 
 ### Key Features
 
@@ -25,6 +33,8 @@ NeverMiss solves a common problem for music lovers who have left social media: d
 ---
 
 ## Architecture
+
+<p align="center"> <img src="./demo/user_settings.png" alt="NeverMiss user settings screen" width="900"><br> <em>Set location, email, and frequency preferences (Europe/Athens timezone aware).</em> </p>
 
 ### Web Application
 

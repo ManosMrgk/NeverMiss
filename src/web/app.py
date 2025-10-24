@@ -336,7 +336,7 @@ def refresh_taste():
             submit_background(refresh_taste_and_generate, app, user_uuid, token)
         except Exception as e:
             app.logger.exception("Failed to refresh taste on save: %s", e)
-        return redirect(url_for("index", saved=1))
+        return redirect(url_for("index", submitted=1))
     else:
         # queue a redirect to finish the taste refresh after login
         session["after_login_redirect"] = url_for("post_save_refresh")

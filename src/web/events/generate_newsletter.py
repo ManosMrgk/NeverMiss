@@ -105,7 +105,7 @@ def fmt_event_date(ev: Event) -> str:
     dt = parse_event_dt(ev)
     if not dt:
         return "Date TBA"
-    return dt.strftime("%a, %d %b %Y • %H:%M")
+    return dt.strftime("%a, %d %b %Y") # • %H:%M
 
 
 def event_card(ev: Event) -> str:
