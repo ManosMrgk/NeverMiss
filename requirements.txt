@@ -6,3 +6,4 @@ pydantic==2.12.2
 Flask==3.1.2
 requests==2.32.5
 apscheduler==3.11.0
+beautifulsoup4==4.14.2

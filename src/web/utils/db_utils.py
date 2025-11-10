@@ -233,7 +233,7 @@ def insert_city_events_snapshot(location_value: str, location_label: str, payloa
     cur.execute("""
         INSERT INTO city_events_daily (location_value, location_label, created_at, payload_json)
         VALUES (?, ?, ?, ?)
-    """, (location_value, location_label, int(created_at or time.time()), payload_json))
+    """, (location_label or "", location_label, int(created_at or time.time()), payload_json))
     conn.commit()
 
 def get_latest_city_events_snapshot(location_value: str) -> Optional[Tuple[int, str]]:
